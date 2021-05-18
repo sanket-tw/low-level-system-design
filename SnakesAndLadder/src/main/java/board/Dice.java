@@ -1,17 +1,14 @@
 package board;
 
-import lombok.Data;
-
-@Data
 public class Dice {
 
-    int numberOfDice;
+    private int diceCount;
 
-    public Dice(int numberOfDice) {
-        this.numberOfDice = numberOfDice;
+    public Dice(int diceCount) {
+        this.diceCount = diceCount;
     }
 
-    public int throwDice() {
-        return ((int) (Math.random() * (6 * numberOfDice - numberOfDice))) + 1;
+    public int rollDice() {
+        return (int) (Math.random()*(6*diceCount-diceCount)+1);
     }
 }

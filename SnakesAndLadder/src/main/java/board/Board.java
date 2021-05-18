@@ -1,60 +1,41 @@
 package board;
 
-import board.elements.Ladder;
-import board.elements.Snake;
-import player.Player;
-
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Board {
 
-    Map<Integer, Square> squareMap;
+    int size;
+    Map<Integer, BoardJumps> boardJumpsMap;
 
-    Map<Integer, Snake> snakeMap;
-
-    Map<Integer, Ladder> ladderMap;
-
-    public Square getPosition(int positionValue) {
-        return squareMap.get(positionValue);
+    public Board(int size) {
+        this.size = size;
     }
 
-    public Square getFirstPosition() {
-        return squareMap.get(1);
+    enum MoveStatus {
+        REACHED_END,
+        REACHED_JUMPER,
+        MOVE_NEXT;
     }
 
-    public Square getLastPosition() {
-        return squareMap.get(100);
+    public int getNextPosition(int nextPosition) {
+        return boardJumpsMap.get(nextPosition).getEndPosition();
     }
 
-    public Square moveByPositions(int diceValue, Square currentPosition, BoardNotificationService boardNotificationService) {
-        int currentValue = currentPosition.getSquarePosition();
-        int nextPosition = currentValue + diceValue;
-
-        if (nextPosition > getLastPosition().getSquarePosition()) {
-            boardNotificationService.notify("not allowed as exceeding last position");
-        } else if (nextPosition == getLastPosition().getSquarePosition()) {
-            boardNotificationService.notify("won by token here");
-            return getLastPosition();
-        } else if (snakeMap.containsKey(nextPosition)) {
-            Snake snake = snakeMap.get(nextPosition);
-            boardNotificationService.notify("got a snake");
-            return snake.getEnd();
-        } else if (ladderMap.containsKey(nextPosition)) {
-            boardNotificationService.notify("got a ladder");
-            Ladder ladder = ladderMap.get(nextPosition);
-            return ladder.getEnd();
-        }
+    public void setBoardJumps(List<BoardJumps> boardJumps) {
+        boardJumpsMap = new HashMap<>();
+        boardJumps.forEach(boardJump -> {
+            boardJumpsMap.put(boardJump.getStartPosition(), boardJump);
+        });
     }
 
-    private boolean isGameFinished(Square nextPosition, Board board) {
-        return nextPosition.isLastPosition();
-    }
-
-    private boolean canMoveFromFirstPosition(Square currentPosition, int diceValue) {
-        return currentPosition.getSquarePosition() == 1 && diceValue == 6;
-    }
-
-    public void validatePosition(Square finalPosition, Board board, Player currentPlayer) {
-
+    public MoveStatus validateNextValue(int nextPosition) {
+        if (nextPosition >= size - 1)
+            return MoveStatus.REACHED_END;
+        else if (boardJumpsMap.containsKey(nextPosition))
+            return MoveStatus.REACHED_JUMPER;
+        else
+            return MoveStatus.MOVE_NEXT;
     }
 }
