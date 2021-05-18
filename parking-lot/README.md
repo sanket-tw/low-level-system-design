@@ -26,7 +26,7 @@ Objectives:
 Actors/Role:
 Admin
 System
-Customer
+com.bookmyshow.users.LoggedUser
 Assistant:  can take paymentProcessor, be at info panel paymentProcessor,
 
 
@@ -41,7 +41,7 @@ Actions
 6. release spot S
 7. accept paymentProcessor S,A
 	
-	Customer        1. Accept ticket
+	com.bookmyshow.users.LoggedUser        1. Accept ticket
 					2. scan ticker
 					3. pay ticket
 					4. Credit Card/Cash paymentProcessor
