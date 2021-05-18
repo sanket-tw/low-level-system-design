@@ -4,22 +4,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static board.Move.MoveStatus.REACHED_JUMPER;
+
 public class Board {
 
     int size;
+
     Map<Integer, BoardJumps> boardJumpsMap;
 
     public Board(int size) {
         this.size = size;
     }
 
-    enum MoveStatus {
-        REACHED_END,
-        REACHED_JUMPER,
-        MOVE_NEXT;
+    public Move getNextMove(int diceValue, int currentPosition) {
+        int nextPosition = diceValue + currentPosition;
+        Move.MoveStatus status = validateNextValue(nextPosition);
+        if (status.equals(REACHED_JUMPER))
+            nextPosition = getJumperMovePosition(nextPosition);
+        return new Move(status, nextPosition);
     }
 
-    public int getNextPosition(int nextPosition) {
+    private int getJumperMovePosition(int nextPosition) {
         return boardJumpsMap.get(nextPosition).getEndPosition();
     }
 
@@ -30,12 +35,12 @@ public class Board {
         });
     }
 
-    public MoveStatus validateNextValue(int nextPosition) {
+    public Move.MoveStatus validateNextValue(int nextPosition) {
         if (nextPosition >= size - 1)
-            return MoveStatus.REACHED_END;
+            return Move.MoveStatus.REACHED_END;
         else if (boardJumpsMap.containsKey(nextPosition))
-            return MoveStatus.REACHED_JUMPER;
+            return Move.MoveStatus.REACHED_JUMPER;
         else
-            return MoveStatus.MOVE_NEXT;
+            return Move.MoveStatus.MOVE_NEXT;
     }
 }

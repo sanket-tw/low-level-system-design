@@ -6,9 +6,8 @@ public class SnakesAndLadderGame {
 
     Board board;
     GameNotification gameNotification;
+    PlayerService playerService;
     Dice dice;
-    Queue<Player> playerQueue;
-    Map<Player, Integer> playerCurrentPositionMap;
 
     public static void main(String[] args) {
         SnakesAndLadderGame snakesAndLadderGame = new SnakesAndLadderGame();
@@ -25,47 +24,32 @@ public class SnakesAndLadderGame {
         board = new Board(boardSize);
         board.setBoardJumps(boardJumps);
         dice = new Dice(diceCount);
-        playerQueue = new LinkedList<>();
-        playerCurrentPositionMap = new HashMap<>();
         gameNotification = new GameNotification();
+        playerService = new PlayerService();
     }
 
     void addPlayer(String name) {
-        Player newPlayer = new Player(name);
-        playerQueue.offer(newPlayer);
-        playerCurrentPositionMap.put(newPlayer, 1);
+        Player player = playerService.addPlayer(name);
+        playerService.setPosition(player, 1);
     }
 
     void playGame() {
-        while (playersLeftToCompleteGame()) {
-
-            Player currentPlayer = playerQueue.poll();
-            int currentPosition = playerCurrentPositionMap.get(currentPlayer);
+        while (playerService.gameContinues()) {
+            Player currentPlayer = playerService.getCurrentPlayer();
+            int currentPosition = playerService.getCurrentPosition(currentPlayer);
             int diceValue = dice.rollDice();
-            int nextPosition = currentPosition + diceValue;
 
-            var nextMoveStatus = board.validateNextValue(nextPosition);
-            processNextMove(currentPlayer, nextPosition, nextMoveStatus);
+            var move = board.getNextMove(diceValue, currentPosition);
+            playerService.setPosition(currentPlayer, move.getPosition());
+
+            processNextMove(currentPlayer, move);
         }
+        gameNotification.print("Game Finished");
     }
 
-    private void processNextMove(Player currentPlayer, int nextPosition, Board.MoveStatus nextMoveStatus) {
-        if (nextMoveStatus.equals(Board.MoveStatus.REACHED_END))
-            gameNotification.print("Game Ended");
-        else if (nextMoveStatus.equals(Board.MoveStatus.MOVE_NEXT)) {
-            playerCurrentPositionMap.put(currentPlayer, nextPosition);
-            playerQueue.offer(currentPlayer);
-            gameNotification.print(currentPlayer + " moves postion " + nextPosition);
-        } else if (nextMoveStatus.equals(Board.MoveStatus.REACHED_JUMPER)) {
-            nextPosition = board.getNextPosition(nextPosition);
-            playerCurrentPositionMap.put(currentPlayer, nextPosition);
-            playerQueue.offer(currentPlayer);
-            gameNotification.print(currentPlayer + " encounters snakes and ladder at postion " + nextPosition);
-        }
+    private void processNextMove(Player currentPlayer, Move nexMove) {
+        if (!nexMove.isLastMove())
+            playerService.playerContinues(currentPlayer);
+        gameNotification.display(nexMove, currentPlayer);
     }
-
-    private boolean playersLeftToCompleteGame() {
-        return playerQueue.size() > 1;
-    }
-
 }
