@@ -1,4 +1,4 @@
-package board;
+package player;
 
 import lombok.Data;
 

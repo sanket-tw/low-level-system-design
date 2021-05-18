@@ -20,3 +20,6 @@
     declare winner or loser
     notification - @ terminal
    
+
+used strategy pattern for implementin method behaviour of displaying messages to user
+   

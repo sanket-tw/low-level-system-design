@@ -1,4 +1,11 @@
-package board;
+import board.Board;
+import board.BoardJumps;
+import board.Dice;
+import board.Move;
+import notification.ConsoleNotification;
+import notification.GameNotification;
+import player.Player;
+import player.PlayerService;
 
 import java.util.*;
 
@@ -9,31 +16,20 @@ public class SnakesAndLadderGame {
     PlayerService playerService;
     Dice dice;
 
-    public static void main(String[] args) {
-        SnakesAndLadderGame snakesAndLadderGame = new SnakesAndLadderGame();
-        snakesAndLadderGame.initializeGame(15, List.of(new BoardJumps(1, 2)), 1);
-
-        snakesAndLadderGame.addPlayer("Sanket");
-        snakesAndLadderGame.addPlayer("Sanket2");
-        snakesAndLadderGame.addPlayer("Sanket3");
-
-        snakesAndLadderGame.playGame();
-    }
-
-    void initializeGame(int boardSize, List<BoardJumps> boardJumps, int diceCount) {
+    public void initializeGame(int boardSize, List<BoardJumps> boardJumps, int diceCount) {
         board = new Board(boardSize);
         board.setBoardJumps(boardJumps);
         dice = new Dice(diceCount);
-        gameNotification = new GameNotification();
+        gameNotification = new ConsoleNotification();
         playerService = new PlayerService();
     }
 
-    void addPlayer(String name) {
+    public void addPlayer(String name) {
         Player player = playerService.addPlayer(name);
         playerService.setPosition(player, 1);
     }
 
-    void playGame() {
+    public void playGame() {
         while (playerService.gameContinues()) {
             Player currentPlayer = playerService.getCurrentPlayer();
             int currentPosition = playerService.getCurrentPosition(currentPlayer);

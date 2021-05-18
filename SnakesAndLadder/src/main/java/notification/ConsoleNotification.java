@@ -1,7 +1,10 @@
-package board;
+package notification;
 
-public class GameNotification {
-    void print(String game_status) {
+import board.Move;
+import player.Player;
+
+public class ConsoleNotification implements GameNotification {
+    public void print(String game_status) {
         System.out.println(game_status);
     }
 

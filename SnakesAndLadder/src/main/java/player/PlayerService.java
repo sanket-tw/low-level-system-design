@@ -1,4 +1,4 @@
-package board;
+package player;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,13 +15,13 @@ public class PlayerService {
         playerCurrentPositionMap = new HashMap<>();
     }
 
-    Player addPlayer(String name) {
+    public Player addPlayer(String name) {
         Player newPlayer = new Player(name);
         playerQueue.offer(newPlayer);
         return newPlayer;
     }
 
-    void setPosition(Player player, int position) {
+    public void setPosition(Player player, int position) {
         playerCurrentPositionMap.put(player, position);
     }
 
